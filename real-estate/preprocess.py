@@ -1,8 +1,15 @@
 import json
+import os
+import re
+from itertools import filterfalse
 
 
 def xstr(s):
-    return '' if s is None else str(s)
+    if s is None:
+        return ""
+    if isinstance(s, bool):
+        return "1" if s else "0"
+    return str(s)
 
 
 def preprocess(inputFile: str, outputFile: str):
@@ -19,7 +26,13 @@ def preprocess(inputFile: str, outputFile: str):
             "entrance",
             "house_aspect",
             "balcony_aspect",
-            "price"
+            "interior",
+            "near_center",
+            "owner",
+            "alley",
+            "villa",
+            "new",
+            "price",
         )
         fOut.write(f"{tab.join(headers)}\n")
         for i, line in enumerate(fIn):
@@ -81,6 +94,49 @@ def preprocess(inputFile: str, outputFile: str):
                 if balconyAspect == "KXĐ":
                     balconyAspect = None
 
+            description = detail["description"].lower()
+
+            interiorStr = features.get("Nội thất")
+            if interiorStr is None:
+                interior = None
+            else:
+                interiorStr = interiorStr.lower()
+                noStartStrs = ["ko", "khong", "không", "k ", "kxđ"]
+                # fmt: off
+                if interiorStr == "k" or any(interiorStr.startswith(s) for s in noStartStrs):
+                    interior = False
+                else:
+                    interior = True
+                # fmt: on
+
+            # match = re.match(
+            #     r"([0-9]*[.,]?[0-9]+)\s*m?\s*[*x]\s*([0-9]*[.,]?[0-9]+)", description,
+            # )
+            # if match:
+            #     width, length = match.group(1, 2)
+            # else:
+            #     pass
+
+            nearCenter = district in ["Quận 1", "Quận 3", "Quận 4", "Bình Thạnh"]
+            owner = any(
+                searchStr in description
+                for searchStr in ["sổ đỏ", "sổ hồng", "chính chủ", "pháp lý"]
+            )
+
+            alley = False
+            if address is not None:
+                alley = "/" in address
+
+            if not alley:
+                alley = "hẻm" in description
+
+            villa = "biệt thự" in description
+
+            new = any(
+                searchStr in description
+                for searchStr in ["nhà mới", "mới xây", "mới 100"]
+            )
+
             row = (
                 xstr(area),
                 xstr(district),
@@ -92,13 +148,46 @@ def preprocess(inputFile: str, outputFile: str):
                 xstr(entrance),
                 xstr(houseAspect),
                 xstr(balconyAspect),
-                xstr(price)
+                xstr(interior),
+                xstr(nearCenter),
+                xstr(owner),
+                xstr(alley),
+                xstr(villa),
+                xstr(new),
+                xstr(price),
             )
             fOut.write(f"{tab.join(row)}\n")
 
 
+# from: https://docs.python.org/3/library/itertools.html#itertools-recipes
+def unique_everseen(iterable, key=None):
+    "List unique elements, preserving order. Remember all elements ever seen."
+    # unique_everseen('AAAABBBCCDAABBB') --> A B C D
+    # unique_everseen('ABBCcAD', str.lower) --> A B C D
+    seen = set()
+    seen_add = seen.add
+    if key is None:
+        for element in filterfalse(seen.__contains__, iterable):
+            seen_add(element)
+            yield element
+    else:
+        for element in iterable:
+            k = key(element)
+            if k not in seen:
+                seen_add(k)
+                yield element
 
-dataFile = "data/2019-11-29_23_18_43-removed-duplicate.json"
-outputFile = "data/2019-11-29_23_18_43-preprocessed.csv"
 
-preprocess(inputFile=dataFile, outputFile=outputFile)
+def removeDuplicates(inputFile: str, outputFile: str):
+    with open(inputFile) as fIn, open(outputFile, "w") as fOut:
+        for line in unique_everseen(fIn):
+            fOut.write(f"{line}")
+
+
+dataFile = "data/2019-11-29_23_18_43.json"
+noDuplicatedFile = "data/2019-11-29_23_18_43-no-dup.json"
+outputFile = "data/2019-11-29_23_18_43.csv"
+
+if not os.path.exists(noDuplicatedFile):
+    removeDuplicates(inputFile=dataFile, outputFile=noDuplicatedFile)
+preprocess(inputFile=noDuplicatedFile, outputFile=outputFile)
