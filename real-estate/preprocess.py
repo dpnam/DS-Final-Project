@@ -181,7 +181,7 @@ def unique_everseen(iterable, key=None):
 def removeDuplicates(inputFile: str, outputFile: str):
     with open(inputFile) as fIn, open(outputFile, "w") as fOut:
         for line in unique_everseen(fIn):
-            fOut.write(f"{line}")
+            fOut.write(line)
 
 
 dataFile = "data/2019-11-29_23_18_43.json"
