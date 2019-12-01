@@ -17,8 +17,8 @@ def preprocess(inputFile: str, outputFile: str):
             "toilets",
             "front",
             "entrance",
-            "houseAspect",
-            "balconyAspect",
+            "house_aspect",
+            "balcony_aspect",
             "price"
         )
         fOut.write(f"{tab.join(headers)}\n")

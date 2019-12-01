@@ -1,4 +1,4 @@
-area	district	address	floors	bedrooms	toilets	front	entrance	houseAspect	balconyAspect	price
+area	district	address	floors	bedrooms	toilets	front	entrance	house_aspect	balcony_aspect	price
 100.0	Bình Chánh	Đường Đinh Đức Thiện, Xã Bình Chánh	2	4	2	30.0	8.0	Tây-Bắc	Tây-Bắc	1200.0
 128.0	Quận 2	Đường 12, Phường Bình An								12800.0
 60.0	Hóc Môn	Đường Liên Xã, Xã Tân Hiệp				5.0	8.0			1050.0
