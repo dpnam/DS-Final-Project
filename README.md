@@ -12,5 +12,6 @@ Cho các thông tin về một căn nhà (đường, quận/huyện, diện tíc
 - Hay ai đó muốn biết giá trị căn nhà của mình.
 - ...
 ## Chi tiết Project:
+- Dữ liệu mà nhóm thu thập là chi tiết các căn nhà được bán thành công trong năm 2019 của Quận Cam, Bang Cali, Mỹ. Dữ liệu thu thập là hoàn toàn hợp pháp. Ngày thu thâp dữ liệu là ngày 10/12/2019.
 - Slide: https://github.com/dpnam/DS-Final-Project/blob/master/report-slide/BaoCaoCuoiKy_DS.pdf
 - File code: https://github.com/dpnam/DS-Final-Project/blob/master/real-estate-California/HousePrice_California.ipynb
